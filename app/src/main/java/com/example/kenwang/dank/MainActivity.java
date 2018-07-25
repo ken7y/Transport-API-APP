@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                                 String mainid = testers.getId();
                                 total++;
                                 String[] idafter =  mainid.split("_");
-                                if(idafter[3].equals("518")){
+
                                     int indexOfLastStop = testers.getTripUpdate().getStopTimeUpdateList().size();
 
                                     counting++;
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     }
 
-                                }
+
                                 /**
                                  * if the last id is 200059 then its going city direction
                                  * if the last id is 211316 or 2113232 then its going macq uni direction
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                             /**
                              * can sometimes get two identical responses but one with delay and one without.
                              * Delay is in seconds
-                             * 
+                             *
                              */
 
 
