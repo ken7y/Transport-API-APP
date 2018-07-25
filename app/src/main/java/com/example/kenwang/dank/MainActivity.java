@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -23,6 +25,7 @@ import okhttp3.Response;
 
 
 public class MainActivity extends AppCompatActivity {
+    List<GtfsRealtime.FeedEntity> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +78,27 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             // do something wih the result
                             GtfsRealtime.FeedMessage newMessage = GtfsRealtime.FeedMessage.parseFrom(response.body().byteStream());
-                            Log.d("dank", newMessage.toString());
+                            int counting = 0;
+                            int total = 0;
 
-                            //.d("dank", response.body().bytes().length+"");
+                            for(GtfsRealtime.FeedEntity testers: newMessage.getEntityList()){
+                                String mainid = testers.getId();
+                                total++;
+                                String[] idafter =  mainid.split("_");
+                                if(idafter[3].equals("518")){
+                                    counting++;
+                                    list.add(testers);
+                                }
+                                /**
+                                 * if the last id is 200059 then its going city direction
+                                 * if the last id is 211316 then its going macq uni direction
+                                 */
+                            }
+                            for (GtfsRealtime.FeedEntity item : list){
+                                Log.d("5","203");
+                            }
+                            Log.d("koolkids", "count");
+                            //Log.d("dank", response.body().bytes().length+"");
                         }
                     }
                 });
