@@ -1,5 +1,6 @@
 package com.example.kenwang.dank;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -7,7 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class displayTransportList extends AppCompatActivity {
-
+    String destinationLocation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,14 +17,77 @@ public class displayTransportList extends AppCompatActivity {
 
 
         TextView textBox =(TextView) findViewById(R.id.LabelTest);
-        String startTxt = getIntent().getExtras().getString("startLocation");
+        String startTxt ="";
+        startTxt = getIntent().getExtras().getString("startLocation");
         textBox.setText(startTxt);
 
         Button destinationHome = (Button) findViewById(R.id.destinationHome);
         Button destinationUni = (Button) findViewById(R.id.destinationUni);
         Button destinationMacq = (Button) findViewById(R.id.destinationMacq);
         Button destinationTownHall = (Button) findViewById(R.id.destinationTownHall);
-        Button destinationCentral = (Button) findViewById(R.id.destinationCentral);
+        final Button destinationCentral = (Button) findViewById(R.id.destinationCentral);
+
+
+        final String startLocation = startTxt;
+        destinationHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                destinationLocation="Home";
+                Intent startIntent = new Intent(getApplicationContext(),displayRoutesList.class);
+                startIntent.putExtra("startLocation", startLocation);
+                startIntent.putExtra("destinationLocation", destinationLocation);
+                startActivity(startIntent);
+            }
+        });
+
+        destinationCentral.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                destinationLocation="Central";
+                Intent startIntent = new Intent(getApplicationContext(),displayRoutesList.class);
+                startIntent.putExtra("startLocation", startLocation);
+                startIntent.putExtra("destinationLocation", destinationLocation);
+                startActivity(startIntent);
+            }
+        });
+
+        destinationMacq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                destinationLocation="Macq";
+                Intent startIntent = new Intent(getApplicationContext(),displayRoutesList.class);
+                startIntent.putExtra("startLocation", startLocation);
+                startIntent.putExtra("destinationLocation", destinationLocation);
+                startActivity(startIntent);
+            }
+        });
+
+        destinationTownHall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                destinationLocation="TownHall";
+                Intent startIntent = new Intent(getApplicationContext(),displayRoutesList.class);
+                startIntent.putExtra("startLocation", startLocation);
+                startIntent.putExtra("destinationLocation", destinationLocation);
+                startActivity(startIntent);
+            }
+        });
+
+        destinationUni.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                destinationLocation="Uni";
+                Intent startIntent = new Intent(getApplicationContext(),displayRoutesList.class);
+                startIntent.putExtra("startLocation", startLocation);
+                startIntent.putExtra("destinationLocation", destinationLocation);
+                startActivity(startIntent);
+            }
+        });
+
+
+
+
+
 
 
 
