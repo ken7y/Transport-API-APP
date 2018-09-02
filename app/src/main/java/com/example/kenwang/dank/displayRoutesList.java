@@ -45,6 +45,7 @@ public class displayRoutesList extends AppCompatActivity {
         hash4dest.put("HomeTownHall","211220:200059");
         hash4dest.put("HomeMacq","211253:211333");
         hash4dest.put("HomeCentral","211220:2000428");
+        hash4dest.put("TownHallUni","200073:200071");
 
 
 
@@ -116,15 +117,38 @@ public class displayRoutesList extends AppCompatActivity {
                                 break;
 
                             case "TownHall":
+                                newString = "TownHall".concat(goalText);
+                                newRegex = hash4dest.get(newString);
+                                stopIDS = newRegex.split(":");
+                                startVAR = stopIDS[0];
+                                endVAR = stopIDS[1];
                                 break;
 
                             case "Macq":
+                                newString = "Macq".concat(goalText);
+                                newRegex = hash4dest.get(newString);
+                                stopIDS = newRegex.split(":");
+                                startVAR = stopIDS[0];
+                                endVAR = stopIDS[1];
                                 break;
 
                             case "Central":
+                                newString = "Central".concat(goalText);
+                                newRegex = hash4dest.get(newString);
+                                stopIDS = newRegex.split(":");
+                                startVAR = stopIDS[0];
+                                endVAR = stopIDS[1];
                                 break;
                         }
-
+/**
+ * read the code but basically I only do a check on last stop and this is bad because buses to uni have multiple last stops
+ * So basically the issue is
+ * 1) Need to be able to filter routes without checking last stop and hopefully
+ * without the need to loop through every route and every stop. So either
+ * filter out by route name or something.
+ * 2) code is kind of messy
+ * 3) Going to add in extra feature of showing bus live location so I don't get cucked by memes.
+ */
                     if(indexOfLastStop >0){
                         if (testers.getTripUpdate().getStopTimeUpdate(indexOfLastStop - 1).getStopId().equals(endVAR)) {
                             int i = 0;
