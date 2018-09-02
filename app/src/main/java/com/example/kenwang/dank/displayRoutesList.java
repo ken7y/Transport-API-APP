@@ -12,7 +12,9 @@ import com.google.transit.realtime.GtfsRealtime;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 
 import okhttp3.Call;
@@ -24,8 +26,14 @@ import okhttp3.Response;
 public class displayRoutesList extends AppCompatActivity {
     ListView listViewId;
     List lis5t = new ArrayList();
+    List listTemp = new ArrayList();
+    Hashtable<String,String> hash4dest =new Hashtable<String,String>();
+
+
     ArrayAdapter adapter;
 
+    String startStop;
+    String destinationStop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,22 +41,31 @@ public class displayRoutesList extends AppCompatActivity {
         setContentView(R.layout.activity_display_routes_list);
         listViewId = (ListView) findViewById(R.id.listOfTimes);
 
+
+        hash4dest.put("HomeTownHall","211220:200059");
+        hash4dest.put("HomeMacq","211253:211333");
+        hash4dest.put("HomeCentral","211220:2000428");
+
+
+
+
+
+
         adapter = new ArrayAdapter(displayRoutesList.this, android.R.layout.simple_list_item_1, lis5t);
         listViewId.setAdapter(adapter);
         Log.d("super dnak memes", "count");
 
         TextView textBox = (TextView) findViewById(R.id.startText);
-        String startText = getIntent().getExtras().getString("startLocation");
+        final String startText = getIntent().getExtras().getString("startLocation");
         textBox.setText(startText);
 
 
         TextView endText = (TextView) findViewById(R.id.goalText);
-        String goalText = getIntent().getExtras().getString("destinationLocation");
+        final String goalText = getIntent().getExtras().getString("destinationLocation");
         endText.setText(goalText);
 
         final List<GtfsRealtime.FeedEntity> citylist = new ArrayList<>();
-        final List<GtfsRealtime.FeedEntity> macqlist = new ArrayList<>();
-        final List<GtfsRealtime.FeedEntity> fakelist = new ArrayList<>();
+
 
         OkHttpClient client = new OkHttpClient();
 
@@ -80,37 +97,88 @@ public class displayRoutesList extends AppCompatActivity {
                     for (final GtfsRealtime.FeedEntity testers : newMessage.getEntityList()) {
                         String mainid = testers.getId();
                         total++;
-                        String[] idafter = mainid.split("_");
+                        final String[] idafter = mainid.split("_");
 
                         int indexOfLastStop = testers.getTripUpdate().getStopTimeUpdateList().size();
 
                         counting++;
 
-                        if (testers.getTripUpdate().getStopTimeUpdate(indexOfLastStop - 1).getStopId().equals("200059")) {
+                        String startVAR = "";
+                        String endVAR = "";
+
+                        switch (startText) {
+                            case "Home":
+                                String newString = "Home".concat(goalText);
+                                String newRegex = hash4dest.get(newString);
+                                String[] stopIDS = newRegex.split(":");
+                                startVAR = stopIDS[0];
+                                endVAR = stopIDS[1];
+                                break;
+
+                            case "TownHall":
+                                break;
+
+                            case "Macq":
+                                break;
+
+                            case "Central":
+                                break;
+                        }
+
+                    if(indexOfLastStop >0){
+                        if (testers.getTripUpdate().getStopTimeUpdate(indexOfLastStop - 1).getStopId().equals(endVAR)) {
+                            int i = 0;
                             for (GtfsRealtime.TripUpdate.StopTimeUpdate temp : testers.getTripUpdate().getStopTimeUpdateList()) {
-                                if (temp.getStopId().equals("211220")) {
+                                if (temp.getStopId().equals(startVAR)) {
                                     citylist.add(testers);
                                     Log.d("koolkids", "count");
 
+                                    final int finalI = i;
                                     runOnUiThread(new Runnable() {
                                         public void run() {
-                                            long datee = testers.getTripUpdate().getStopTimeUpdate(41).getDeparture().getTime();
-                                            Date d = new Date(testers.getTripUpdate().getStopTimeUpdate(41).getDeparture().getTime()*1000);
-                                            lis5t.add(d);
 
-                                            adapter.notifyDataSetChanged();                                        }
+
+                                            long datee = testers.getTripUpdate().getStopTimeUpdate(finalI).getArrival().getTime() ;
+
+                                            Date d = new Date(datee * 1000);
+                                            /**
+                                             lis5t.add(d + idafter[3]);
+                                             **/
+
+
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    lis5t.clear();
+                                                }
+                                            });
+
+                                            listTemp.add(d + idafter[0]+idafter[1]+idafter[2]+idafter[3]);
+                                            /**
+                                             *                                            Collections.sort(listTemp);
+
+                                             */
+                                            Collections.sort(listTemp);
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    for (Object item : listTemp) {
+                                                        lis5t.add(item);
+                                                    }
+                                                    adapter.notifyDataSetChanged();
+                                                }
+                                            });
+
+
+                                        }
                                     });
 
                                 }
+                                i++;
                             }
 
-                        } else if (testers.getTripUpdate().getStopTimeUpdate(indexOfLastStop - 1).getStopId().equals("211316")) {
-                            macqlist.add(testers);
-                        } else {
-                            fakelist.add(testers);
-
                         }
-
+                    }
 
 
                         /**
@@ -133,11 +201,11 @@ public class displayRoutesList extends AppCompatActivity {
 
 
         lis5t.add("testing");
-        lis5t.add("testing");
-        lis5t.add("testing");
-        lis5t.add("testing");
         Log.d("testing", "testing");
+        Log.d("test2ing", "testing");
 
 
     }
+
+
 }
