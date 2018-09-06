@@ -28,7 +28,10 @@ public class displayRoutesList extends AppCompatActivity {
     List lis5t = new ArrayList();
     List listTemp = new ArrayList();
     Hashtable<String,String> hash4dest =new Hashtable<String,String>();
+    ArrayList<String> HomeCityList = new ArrayList<String>();
+    ArrayList<String> CityUniList = new ArrayList<String>();
 
+    ArrayList<String> HomeMacqList = new ArrayList<String>();
 
     ArrayAdapter adapter;
 
@@ -40,13 +43,28 @@ public class displayRoutesList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_routes_list);
         listViewId = (ListView) findViewById(R.id.listOfTimes);
+        /**
+         * init stuff
+         */
+        HomeCityList.add("518");
+        HomeCityList.add("M52");
+        HomeCityList.add("515");
+        HomeCityList.add("520");
+        HomeMacqList.add("518");
+        HomeMacqList.add("M41");
+        CityUniList.add("L94");
+        CityUniList.add("399");
+        CityUniList.add("396");
+        CityUniList.add("392");
+        CityUniList.add("394");
+        CityUniList.add("395");
 
 
-        hash4dest.put("HomeTownHall","211220:200059");
+
+        hash4dest.put("HomeTownHall","200073:200059");
         hash4dest.put("HomeMacq","211253:211333");
         hash4dest.put("HomeCentral","211220:2000428");
         hash4dest.put("TownHallUni","200073:200071");
-
 
 
 
@@ -95,6 +113,44 @@ public class displayRoutesList extends AppCompatActivity {
                     int counting = 0;
                     int total = 0;
 
+
+                    String startVAR = "";
+                    String endVAR = "";
+
+                    switch (startText) {
+                        case "Home":
+                            String newString = "Home".concat(goalText);
+                            String newRegex = hash4dest.get(newString);
+                            String[] stopIDS = newRegex.split(":");
+                            startVAR = stopIDS[0];
+                            endVAR = stopIDS[1];
+                            break;
+
+                        case "TownHall":
+                            newString = "TownHall".concat(goalText);
+                            newRegex = hash4dest.get(newString);
+                            stopIDS = newRegex.split(":");
+                            startVAR = stopIDS[0];
+                            endVAR = stopIDS[1];
+                            break;
+
+                        case "Macq":
+                            newString = "Macq".concat(goalText);
+                            newRegex = hash4dest.get(newString);
+                            stopIDS = newRegex.split(":");
+                            startVAR = stopIDS[0];
+                            endVAR = stopIDS[1];
+                            break;
+
+                        case "Central":
+                            newString = "Central".concat(goalText);
+                            newRegex = hash4dest.get(newString);
+                            stopIDS = newRegex.split(":");
+                            startVAR = stopIDS[0];
+                            endVAR = stopIDS[1];
+                            break;
+                    }
+
                     for (final GtfsRealtime.FeedEntity testers : newMessage.getEntityList()) {
                         String mainid = testers.getId();
                         total++;
@@ -104,42 +160,7 @@ public class displayRoutesList extends AppCompatActivity {
 
                         counting++;
 
-                        String startVAR = "";
-                        String endVAR = "";
 
-                        switch (startText) {
-                            case "Home":
-                                String newString = "Home".concat(goalText);
-                                String newRegex = hash4dest.get(newString);
-                                String[] stopIDS = newRegex.split(":");
-                                startVAR = stopIDS[0];
-                                endVAR = stopIDS[1];
-                                break;
-
-                            case "TownHall":
-                                newString = "TownHall".concat(goalText);
-                                newRegex = hash4dest.get(newString);
-                                stopIDS = newRegex.split(":");
-                                startVAR = stopIDS[0];
-                                endVAR = stopIDS[1];
-                                break;
-
-                            case "Macq":
-                                newString = "Macq".concat(goalText);
-                                newRegex = hash4dest.get(newString);
-                                stopIDS = newRegex.split(":");
-                                startVAR = stopIDS[0];
-                                endVAR = stopIDS[1];
-                                break;
-
-                            case "Central":
-                                newString = "Central".concat(goalText);
-                                newRegex = hash4dest.get(newString);
-                                stopIDS = newRegex.split(":");
-                                startVAR = stopIDS[0];
-                                endVAR = stopIDS[1];
-                                break;
-                        }
 /**
  * read the code but basically I only do a check on last stop and this is bad because buses to uni have multiple last stops
  * So basically the issue is
@@ -150,7 +171,7 @@ public class displayRoutesList extends AppCompatActivity {
  * 3) Going to add in extra feature of showing bus live location so I don't get cucked by memes.
  */
                     if(indexOfLastStop >0){
-                        if (testers.getTripUpdate().getStopTimeUpdate(indexOfLastStop - 1).getStopId().equals(endVAR)) {
+                        if (CityUniList.contains(idafter[3])) {
                             int i = 0;
                             for (GtfsRealtime.TripUpdate.StopTimeUpdate temp : testers.getTripUpdate().getStopTimeUpdateList()) {
                                 if (temp.getStopId().equals(startVAR)) {
@@ -160,10 +181,7 @@ public class displayRoutesList extends AppCompatActivity {
                                     final int finalI = i;
                                     runOnUiThread(new Runnable() {
                                         public void run() {
-
-
                                             long datee = testers.getTripUpdate().getStopTimeUpdate(finalI).getArrival().getTime() ;
-
                                             Date d = new Date(datee * 1000);
                                             /**
                                              lis5t.add(d + idafter[3]);
@@ -192,15 +210,11 @@ public class displayRoutesList extends AppCompatActivity {
                                                     adapter.notifyDataSetChanged();
                                                 }
                                             });
-
-
                                         }
                                     });
-
                                 }
                                 i++;
                             }
-
                         }
                     }
 
