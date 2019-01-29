@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Calendar;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -78,7 +79,7 @@ public class displayRoutesList extends AppCompatActivity {
         hash4dest.put("HomeCentral","211220:2000428"); // This one is correct
         hash4dest.put("TownHallUni","200073:203311"); // This one is correct
         hash4dest.put("MacqHome","2113224:2112242"); // This one is correct
-        hash4dest.put("TownHallHome","2000252:211228");
+        hash4dest.put("TownHallHome","2000252:211228"); // This one is correct
 
         BusIdHashTable.put("HomeTownHall",HomeTownHallList);
         BusIdHashTable.put("HomeMacq",HomeMacqList);
@@ -265,11 +266,22 @@ public class displayRoutesList extends AppCompatActivity {
                                                 public void run() {
                                                     for (Object item : listTemp) {
                                                         String convertedToString = String.valueOf(item);
-                                                        String[] datedata = convertedToString.split("GMT", 2);
-                                                        String[] busData = datedata[1].split("2019", 2);
+                                                        String[] dateData = convertedToString.split("GMT", 2);
+                                                        String[] busData = dateData[1].split("2019", 2);
                                                         // date data 0 + bus data 1
+                                                        String [] timeData = dateData[0].split("[a-zA-Z]{3} [0-9]{2}",2);
+                                                        //time data 1
+                                                        Calendar calendar = Calendar.getInstance();
+                                                        Integer localHour = calendar.get(Calendar.HOUR_OF_DAY);
+                                                        Integer localMinute = calendar.get(Calendar.MINUTE);
+                                                        // timedata1 i hh:mm:ss
+                                                        String [] timeInt = timeData[1].split(":",3);
+                                                        localHour = localHour - Integer.parseInt(timeInt[0].replaceAll("\\s+",""));
+                                                        localMinute = localMinute - Integer.parseInt(timeInt[1]);
 
-                                                        lis5t.add(datedata[0] + busData[1]);
+                                                        localHour = localHour * -1;
+                                                        localMinute = localMinute*-1 + localHour*60;
+                                                        lis5t.add(busData[1] + " coming in " + localMinute + " Minutes"  + timeData[1]);
                                                     }
                                                     adapter.notifyDataSetChanged();
                                                 }
