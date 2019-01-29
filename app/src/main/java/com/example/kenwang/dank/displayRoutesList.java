@@ -27,11 +27,22 @@ public class displayRoutesList extends AppCompatActivity {
     ListView listViewId;
     List lis5t = new ArrayList();
     List listTemp = new ArrayList();
+    ArrayList<String> ListTempString = new ArrayList<String>();
+
     Hashtable<String,String> hash4dest =new Hashtable<String,String>();
-    ArrayList<String> HomeCityList = new ArrayList<String>();
-    ArrayList<String> CityUniList = new ArrayList<String>();
 
     ArrayList<String> HomeMacqList = new ArrayList<String>();
+    ArrayList<String> HomeTownHallList = new ArrayList<String>();
+    ArrayList<String> HomeCentralList = new ArrayList<String>();
+
+    Hashtable<String,ArrayList<String>> BusIdHashTable =new Hashtable<String,ArrayList<String>>();
+
+
+    ArrayList<String> TownHallUniList = new ArrayList<String>();
+
+
+
+
 
     ArrayAdapter adapter;
 
@@ -46,25 +57,33 @@ public class displayRoutesList extends AppCompatActivity {
         /**
          * init stuff
          */
-        HomeCityList.add("518");
-        HomeCityList.add("M52");
-        HomeCityList.add("515");
-        HomeCityList.add("520");
+        HomeTownHallList.add("518");
+        HomeTownHallList.add("M52");
+        HomeTownHallList.add("515");
+        HomeTownHallList.add("520");
         HomeMacqList.add("518");
         HomeMacqList.add("M41");
-        CityUniList.add("L94");
-        CityUniList.add("399");
-        CityUniList.add("396");
-        CityUniList.add("392");
-        CityUniList.add("394");
-        CityUniList.add("395");
+        TownHallUniList.add("L94");
+        TownHallUniList.add("399");
+        TownHallUniList.add("396");
+        TownHallUniList.add("392");
+        TownHallUniList.add("394");
+        TownHallUniList.add("395");
+        HomeCentralList.add("501");
 
 
 
-        hash4dest.put("HomeTownHall","200073:200059");
-        hash4dest.put("HomeMacq","211253:211333");
-        hash4dest.put("HomeCentral","211220:2000428");
-        hash4dest.put("TownHallUni","200073:200071");
+        hash4dest.put("HomeTownHall","211220:2000282");// This one is correct
+        hash4dest.put("HomeMacq","211253:211333"); //This one is correct (contains m41 route)
+        hash4dest.put("HomeCentral","211220:2000428"); // This one is correct
+        hash4dest.put("TownHallUni","200073:203311"); // This one is correct
+        hash4dest.put("MacqHome","2113224:2112242"); // This one is correct
+        hash4dest.put("TownHallHome","2000252:211228");
+
+        BusIdHashTable.put("HomeTownHall",HomeTownHallList);
+        BusIdHashTable.put("HomeMacq",HomeMacqList);
+        BusIdHashTable.put("TownHallUni",TownHallUniList);
+        BusIdHashTable.put("HomeCentral",HomeCentralList);
 
 
 
@@ -170,8 +189,34 @@ public class displayRoutesList extends AppCompatActivity {
  * 2) code is kind of messy
  * 3) Going to add in extra feature of showing bus live location so I don't get cucked by memes.
  */
+                        String getBusVar = "";
+                        if (startText.equals("Home")) {
+                            if(goalText.equals("Macq")){
+                                getBusVar = "HomeMacq";
+                            }else if (goalText.equals("TownHall")){
+                                getBusVar = "HomeTownHall";
+                            }else if (goalText.equals("Central")){
+                                getBusVar = "HomeCentral";
+                            }
+
+
+                        } else if (startText.equals("TownHall")) {
+                            if (goalText.equals("Home")){
+                                getBusVar = "HomeTownHall";
+                            }
+                            if(goalText.equals("Uni")){
+                                getBusVar = "TownHallUni";
+                            }
+                        } else if (startText.equals("Macq")) {
+                            getBusVar = "HomeMacq";
+
+                        } else if (startText.equals("Central")){
+                            getBusVar = "HomeCentral";
+                        }
+
+
                     if(indexOfLastStop >0){
-                        if (CityUniList.contains(idafter[3])) {
+                        if (BusIdHashTable.get(getBusVar).contains(idafter[3])) {
                             int i = 0;
                             for (GtfsRealtime.TripUpdate.StopTimeUpdate temp : testers.getTripUpdate().getStopTimeUpdateList()) {
                                 if (temp.getStopId().equals(startVAR)) {
@@ -195,17 +240,36 @@ public class displayRoutesList extends AppCompatActivity {
                                                 }
                                             });
 
-                                            listTemp.add(d + idafter[0]+idafter[1]+idafter[2]+idafter[3]);
+                                            listTemp.add(d + idafter[3]);
                                             /**
                                              *                                            Collections.sort(listTemp);
-
+                                             idafter[0]+idafter[1]+idafter[2]
                                              */
+
+
+
                                             Collections.sort(listTemp);
+
+                                            for (Object temp : listTemp) {
+                                                System.out.println(temp);
+                                                String convertedToString = String.valueOf(temp);
+                                                String[] datedata = convertedToString.split("GMT", 2);
+                                                String[] busData = datedata[1].split("2019", 2);
+                                                // date data 0 + bus data 1
+                                                ListTempString.add(datedata[0] + busData[1]);
+
+                                            }
+
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     for (Object item : listTemp) {
-                                                        lis5t.add(item);
+                                                        String convertedToString = String.valueOf(item);
+                                                        String[] datedata = convertedToString.split("GMT", 2);
+                                                        String[] busData = datedata[1].split("2019", 2);
+                                                        // date data 0 + bus data 1
+
+                                                        lis5t.add(datedata[0] + busData[1]);
                                                     }
                                                     adapter.notifyDataSetChanged();
                                                 }

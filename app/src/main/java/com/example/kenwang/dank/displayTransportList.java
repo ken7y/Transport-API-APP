@@ -101,6 +101,7 @@ public class displayTransportList extends AppCompatActivity {
 
         if (startTxt.equals("Home")) {
             destinationHome.setVisibility(View.INVISIBLE);
+            destinationUni.setVisibility(View.INVISIBLE);
         } else if (startTxt.equals("Macq")) {
             destinationCentral.setVisibility(View.INVISIBLE);
             destinationMacq.setVisibility(View.INVISIBLE);
